@@ -84,13 +84,23 @@ class WpDraftPublishedAdminPage
 			endif;
 			wp_reset_postdata();
 			?>
-			<form method="post" action="admin.php?page=draft-published">
-				<input type="hidden" name="wp-draft-published" value="publish-drafts"/>
-				<input type="hidden" name="publish" value="Publish"/>
-				<input type="submit" name="submit" id="submit"  onclick="return confirm('Do you know what you are doing? If you are not sure please check again. If you press this by mistake you are making WP developers life twice harder than it is.');" class="button button-primary" value="Publish all drafts">
-			</form>
-
 		</table>
+		<br>
+		<form method="post" action="admin.php?page=draft-published">
+			<label>If you click publish button all the drafted pages below will be published.</label> <br /><br />
+			<input type="hidden" name="wp-draft-published" value="publish-drafts"/>
+			<input type="hidden" name="publish" value="Publish"/>
+			<input type="submit" name="submit" id="submit"  onclick="return confirm('Do you know what you are doing? If you are not sure please check again. If you press this by mistake you are making WP developers life twice harder than it is.');" class="button button-primary" value="Publish all drafts">
+		</form>
+		<br /><br />
+		<hr />
+		<h2>Supported Post Types</h2>
+		<p>For now we are supporting only these post types: </p>
+		<p> 'post', 'page', 'features', 'infographics', 'whitepaper'</p>
+		<p>--------</p>
+		<p>We will add dynamic post type feature soon</p>
+		<p>If you need other post types added please email to : <a href="mailto:malith.priyashan.dev@gmail.com"> malith.priyashan.dev@gmail.com</a></p>
+
 		<?php
 	}
 

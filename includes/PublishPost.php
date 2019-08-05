@@ -12,7 +12,7 @@ if (!class_exists('WpDraftPublishPost')) {
 		 * */
 		public function publishDraftedPostById($id, $location = false, $postData = array())
 		{
-			if ((isset($_REQUEST['publish']) && $_REQUEST['publish'] != 'Schedule') || (defined('DOING_CRON') && DOING_CRON) || $location) {
+			if ((isset($_REQUEST['publish']) && $_REQUEST['publish'] != 'Schedule') && sanitize_text_field($_REQUEST['publish']) || (defined('DOING_CRON') && DOING_CRON) || $location) {
 
 				// Check for post meta that identifies this as a 'live draft'
 				$_published_draftId = get_post_meta($id, '_published_draftId', true);
@@ -23,35 +23,35 @@ if (!class_exists('WpDraftPublishPost')) {
 					if (!$location) {
 						$updatedPost = array(
 							'ID' => $_published_draftId,
-							'menu_order' => $_REQUEST['menu_order'],
-							'comment_status' => ($_REQUEST['comment_status'] == 'open' ? 'open' : 'closed'),
-							'ping_status' => ($_REQUEST['ping_status'] == 'open' ? 'open' : 'closed'),
-							'post_author' => $_REQUEST['post_author'],
+							'menu_order' => intval($_REQUEST['menu_order']),
+							'comment_status' => (sanitize_text_field($_REQUEST['comment_status']) == 'open' ? 'open' : 'closed'),
+							'ping_status' => (sanitize_text_field($_REQUEST['ping_status']) == 'open' ? 'open' : 'closed'),
+							'post_author' => sanitize_text_field($_REQUEST['post_author']),
 							'post_category' => (isset($_REQUEST['post_category']) ? $_REQUEST['post_category'] : array()),
-							'post_content' => $_REQUEST['content'],
-							'post_excerpt' => $_REQUEST['excerpt'],
-							'post_parent' => $_REQUEST['parent_id'],
-							'post_password' => $_REQUEST['post_password'],
+							'post_content' => wp_kses_post($_REQUEST['content']),
+							'post_excerpt' => wp_kses_post($_REQUEST['excerpt']),
+							'post_parent' => intval($_REQUEST['parent_id']),
+							'post_password' => sanitize_text_field($_REQUEST['post_password']),
 							'post_status' => 'publish',
-							'post_title' => $_REQUEST['post_title'],
-							'post_type' => $_REQUEST['post_type'],
+							'post_title' => sanitize_text_field($_REQUEST['post_title']),
+							'post_type' => sanitize_text_field($_REQUEST['post_type']),
 							'tags_input' => (isset($_REQUEST['tax_input']['post_tag']) ? $_REQUEST['tax_input']['post_tag'] : '')
 						);
 					} else {
 						$updatedPost = array(
 							'ID' => $_published_draftId,
-							'menu_order' => $postData['menu_order'],
-							'comment_status' => ($postData['comment_status'] == 'open' ? 'open' : 'closed'),
-							'ping_status' => ($postData['ping_status'] == 'open' ? 'open' : 'closed'),
-							'post_author' => $postData['post_author'],
-							'post_category' => (isset($postData['post_category']) ? $postData['post_category'] : array()),
-							'post_content' => $postData['content'],
-							'post_excerpt' => $postData['excerpt'],
-							'post_parent' => $postData['parent_id'],
-							'post_password' => $postData['post_password'],
+							'menu_order' => intval($postData['menu_order']),
+							'comment_status' => (sanitize_text_field($postData['comment_status']) == 'open' ? 'open' : 'closed'),
+							'ping_status' => (sanitize_text_field($postData['ping_status']) == 'open' ? 'open' : 'closed'),
+							'post_author' => sanitize_text_field($postData['post_author']),
+							'post_category' => (isset($postData['post_category']) ? (array) $postData['post_category'] : array()),
+							'post_content' => wp_kses_post($postData['content']),
+							'post_excerpt' => wp_kses_post($postData['excerpt']),
+							'post_parent' => intval($postData['parent_id']),
+							'post_password' => sanitize_text_field($postData['post_password']),
 							'post_status' => 'publish',
-							'post_title' => $postData['post_title'],
-							'post_type' => $postData['post_type'],
+							'post_title' => sanitize_text_field($postData['post_title']),
+							'post_type' => sanitize_text_field($postData['post_type']),
 							'tags_input' => (isset($postData['tax_input']['post_tag']) ? $postData['tax_input']['post_tag'] : '')
 						);
 					}

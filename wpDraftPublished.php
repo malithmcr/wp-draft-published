@@ -88,7 +88,6 @@ if (!class_exists('wpDraftPublished')) {
 				<script type="text/javascript">
 					// Add save draft button to published pages
 					jQuery(function ($) {
-
 						$('<input type="submit" class="button button-highlighted" tabindex="4" value="Save Draft" id="save-post" name="save">').prependTo('#save-action');
 						$('#preview-action').hide();
 					});
@@ -107,31 +106,31 @@ if (!class_exists('wpDraftPublished')) {
 				return $id;
 
 			// Only continue if this request is for the post or page post type
-			if (isset($_POST['post_type']) && !in_array($_POST['post_type'], wpDraftPublished::WP_DRAFT_POST_TYPES)) {
+			if (isset($_POST['post_type']) && sanitize_text_field($_POST['post_type']) && !in_array($_POST['post_type'], wpDraftPublished::WP_DRAFT_POST_TYPES)) {
 				return $id;
 			}
 
 			// Check permissions
-			if (isset($_POST['post_type']) && !current_user_can('edit_' . $_POST['post_type'], $id)) {
+			if (isset($_POST['post_type']) && sanitize_text_field($_POST['post_type'])  && !current_user_can('edit_' . $_POST['post_type'], $id)) {
 				return $id;
 			}
 			// Catch only when a draft is saved of a live page
-			if (isset($_REQUEST['save']) && $_REQUEST['save'] == 'Save Draft' && $_REQUEST['post_status'] == 'publish') {
+			if (isset($_REQUEST['save']) && sanitize_text_field($_REQUEST['save']) && $_REQUEST['save'] == 'Save Draft' && sanitize_text_field($_REQUEST['post_status']) &&  $_REQUEST['post_status'] == 'publish') {
 
 				// Prepare the post to duplicate and make it draft
 				$draftPost = array('post_status' => 'draft');
 
-				$draftPost['menu_order'] = isset($_REQUEST['menu_order']) ? $_REQUEST['menu_order'] : 0;
-				$draftPost['comment_status'] = isset($_REQUEST['comment_status']) ? ($_REQUEST['ping_status'] == 'open' ? 'open' : 'closed') : '';
-				$draftPost['ping_status'] = isset($_REQUEST['ping_status']) ? ($_REQUEST['ping_status'] == 'open' ? 'open' : 'closed') : 0;
-				$draftPost['post_author'] = isset($_REQUEST['post_author']) ? $_REQUEST['post_author'] : '';
-				$draftPost['post_category'] = isset($_REQUEST['post_category']) ? $_REQUEST['post_category'] : array();
-				$draftPost['post_content'] = isset($_REQUEST['content']) ? $_REQUEST['content'] : '';
-				$draftPost['post_excerpt'] = isset($_REQUEST['excerpt']) ? $_REQUEST['excerpt'] : '';
-				$draftPost['post_parent'] = isset($_REQUEST['parent_id']) ? $_REQUEST['parent_id'] : 0;
-				$draftPost['post_password'] = isset($_REQUEST['post_password']) ? $_REQUEST['post_password'] : '';
-				$draftPost['post_title'] = isset($_REQUEST['post_title']) ? $_REQUEST['post_title'] : '';
-				$draftPost['post_type'] = isset($_REQUEST['post_type']) ? $_REQUEST['post_type'] : 'post';
+				$draftPost['menu_order'] = isset($_REQUEST['menu_order']) ? intval($_REQUEST['menu_order']) : 0;
+				$draftPost['comment_status'] = isset($_REQUEST['comment_status']) ? (sanitize_text_field($_REQUEST['ping_status']) == 'open' ? 'open' : 'closed') : '';
+				$draftPost['ping_status'] = isset($_REQUEST['ping_status']) ? (sanitize_text_field($_REQUEST['ping_status']) == 'open' ? 'open' : 'closed') : 0;
+				$draftPost['post_author'] = isset($_REQUEST['post_author']) ? sanitize_text_field($_REQUEST['post_author']) : '';
+				$draftPost['post_category'] = isset($_REQUEST['post_category']) ? (array) $_REQUEST['post_category'] : array();
+				$draftPost['post_content'] = isset($_REQUEST['content']) ? wp_kses_post($_REQUEST['content']) : '';
+				$draftPost['post_excerpt'] = isset($_REQUEST['excerpt']) ? wp_kses_post($_REQUEST['excerpt']) : '';
+				$draftPost['post_parent'] = isset($_REQUEST['parent_id']) ? intval($_REQUEST['parent_id']) : 0;
+				$draftPost['post_password'] = isset($_REQUEST['post_password']) ? sanitize_text_field($_REQUEST['post_password']) : '';
+				$draftPost['post_title'] = isset($_REQUEST['post_title']) ? sanitize_text_field($_REQUEST['post_title']) : '';
+				$draftPost['post_type'] = isset($_REQUEST['post_type']) ? sanitize_text_field($_REQUEST['post_type']) : 'post';
 				$draftPost['tags_input'] = isset($_REQUEST['tax_input']['post_tag']) ? $_REQUEST['tax_input']['post_tag'] : '';
 
 				// Insert the post into the database
