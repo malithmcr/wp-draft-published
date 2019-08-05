@@ -1,5 +1,4 @@
 <?php
-ob_start();
 require_once dirname(__FILE__) . '/includes/Admin.php';
 require_once dirname(__FILE__) . '/includes/PublishPost.php';
 /*
@@ -172,5 +171,4 @@ if (!class_exists('wpDraftPublished')) {
 		$wpDraftPublished = new wpDraftPublished;
 	}
 }
-ob_end_flush();
 ?>
