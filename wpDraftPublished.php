@@ -110,7 +110,7 @@ if (!class_exists('wpDraftPublished')) {
 			}
 
 			// Check permissions
-			if (isset($_POST['post_type']) && sanitize_text_field($_POST['post_type'])  && !current_user_can('edit_' . $_POST['post_type'], $id)) {
+			if (isset($_POST['post_type']) && sanitize_text_field($_POST['post_type'])  && !current_user_can('edit_' . sanitize_text_field($_POST['post_type']), intval($id))) {
 				return $id;
 			}
 			// Catch only when a draft is saved of a live page
@@ -130,13 +130,14 @@ if (!class_exists('wpDraftPublished')) {
 				$draftPost['post_password'] = isset($_REQUEST['post_password']) ? sanitize_text_field($_REQUEST['post_password']) : '';
 				$draftPost['post_title'] = isset($_REQUEST['post_title']) ? sanitize_text_field($_REQUEST['post_title']) : '';
 				$draftPost['post_type'] = isset($_REQUEST['post_type']) ? sanitize_text_field($_REQUEST['post_type']) : 'post';
-				$draftPost['tags_input'] = isset($_REQUEST['tax_input']['post_tag']) ? $_REQUEST['tax_input']['post_tag'] : '';
+				$draftPost['tags_input'] = isset($_REQUEST['tax_input']['post_tag']) ? sanitize_text_field($_REQUEST['tax_input']['post_tag']) : '';
 
 				// Insert the post into the database
 				$newId = wp_insert_post($draftPost);
 
 				// Custom meta data
 				$custom = get_post_custom($id);
+				
 				foreach ($custom as $ckey => $cvalue) {
 					if ($ckey != '_edit_lock' && $ckey != '_edit_last') {
 						foreach ($cvalue as $mvalue) {

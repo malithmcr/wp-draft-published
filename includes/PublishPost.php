@@ -35,7 +35,7 @@ if (!class_exists('WpDraftPublishPost')) {
 							'post_status' => 'publish',
 							'post_title' => sanitize_text_field($_REQUEST['post_title']),
 							'post_type' => sanitize_text_field($_REQUEST['post_type']),
-							'tags_input' => (isset($_REQUEST['tax_input']['post_tag']) ? $_REQUEST['tax_input']['post_tag'] : '')
+							'tags_input' => (isset($_REQUEST['tax_input']['post_tag']) ? sanitize_text_field($_REQUEST['tax_input']['post_tag']) : '')
 						);
 					} else {
 						$updatedPost = array(
@@ -52,7 +52,7 @@ if (!class_exists('WpDraftPublishPost')) {
 							'post_status' => 'publish',
 							'post_title' => sanitize_text_field($postData['post_title']),
 							'post_type' => sanitize_text_field($postData['post_type']),
-							'tags_input' => (isset($postData['tax_input']['post_tag']) ? $postData['tax_input']['post_tag'] : '')
+							'tags_input' => (isset($postData['tax_input']['post_tag']) ? sanitize_text_field($postData['tax_input']['post_tag']) : '')
 						);
 					}
 
